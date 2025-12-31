@@ -2,8 +2,8 @@
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>专属爱心网页</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>专属甜蜜爱心页</title>
     <style>
         * {
             margin: 0;
@@ -14,150 +14,145 @@
             background-color: #fcf1f7;
             height: 100vh;
             display: flex;
-            flex-direction: column;
-            align-items: center;
             justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            font-family: "Microsoft YaHei", sans-serif;
             overflow: hidden;
         }
-        .main-heart {
-            color: #e91e63;
-            font-size: 120px;
-            animation: beat 1.5s infinite ease-in-out;
-            margin-bottom: 20px;
+        /* 爱心呼吸+悬停放大 核心样式 */
+        .heart {
+            width: 100px;
+            height: 100px;
+            background-color: #ff6b8b;
+            position: relative;
+            transform: rotate(45deg);
+            margin-bottom: 60px;
             cursor: pointer;
+            animation: breath 2.2s ease-in-out infinite;
+            transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+            box-shadow: 0 5px 25px rgba(255, 107, 139, 0.5);
         }
-        .text {
-            font-family: "Microsoft YaHei", sans-serif;
-            color: #333;
-            font-size: 24px;
-            text-align: center;
-            margin-bottom: 40px;
-        }
-        .float-heart {
+        .heart::before, .heart::after {
+            content: '';
+            width: 100px;
+            height: 100px;
+            background-color: #ff6b8b;
+            border-radius: 50%;
             position: absolute;
-            color: #e91e6380;
-            font-size: 20px;
-            animation: float 6s infinite linear;
+            transition: background-color 0.4s ease;
         }
-        /* 弹窗样式 */
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0;
+        .heart::before {
+            top: -50px;
             left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0,0,0,0.5);
-            z-index: 999;
-            align-items: center;
-            justify-content: center;
         }
-        .modal-content {
-            background-color: white;
-            padding: 30px 20px;
-            border-radius: 15px;
+        .heart::after {
+            top: 0;
+            left: -50px;
+        }
+        .heart:hover {
+            transform: rotate(45deg) scale(1.2);
+            box-shadow: 0 8px 35px rgba(255, 107, 139, 0.6);
+        }
+        @keyframes breath {
+            0% { transform: rotate(45deg) scale(1); opacity: 0.9; }
+            50% { transform: rotate(45deg) scale(1.08); opacity: 1; }
+            100% { transform: rotate(45deg) scale(1); opacity: 0.9; }
+        }
+        /* 语录弹窗 */
+        .quote-box {
+            width: 90%;
+            max-width: 320px;
+            padding: 25px 20px;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 0 25px rgba(0,0,0,0.12);
             text-align: center;
-            width: 80%;
-            max-width: 400px;
-            animation: pop 0.5s ease-in-out;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0);
+            transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            z-index: 10;
         }
-        .modal-text {
-            font-size: 22px;
-            color: #e91e63;
-            margin-bottom: 20px;
-            line-height: 1.5;
+        .quote-box.active {
+            transform: translate(-50%, -50%) scale(1);
         }
-        .close-btn {
-            padding: 8px 20px;
-            background-color: #e91e63;
+        .quote-box p {
+            font-size: 18px;
+            color: #333;
+            line-height: 1.7;
+            margin-bottom: 22px;
+            letter-spacing: 1px;
+        }
+        .quote-box span {
+            color: #ff6b8b;
+            font-weight: bold;
+        }
+        .quote-box button {
+            padding: 9px 28px;
+            background: #ff6b8b;
             color: white;
             border: none;
             border-radius: 20px;
-            font-size: 16px;
             cursor: pointer;
+            font-size: 15px;
+            transition: background 0.3s ease;
         }
-        @keyframes beat {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.2); }
-            100% { transform: scale(1); }
+        .quote-box button:hover {
+            background: #ff4d6d;
         }
-        @keyframes float {
-            0% {
-                transform: translateY(100vh) rotate(0deg);
-                opacity: 0;
-            }
-            10% {
-                opacity: 1;
-            }
-            90% {
-                opacity: 1;
-            }
-            100% {
-                transform: translateY(-50px) rotate(360deg);
-                opacity: 0;
-            }
-        }
-        @keyframes pop {
-            0% { transform: scale(0); }
-            70% { transform: scale(1.1); }
-            100% { transform: scale(1); }
+        /* 新增底部文字样式 柔和不抢眼 */
+        .footer-text {
+            margin-top: 20px;
+            font-size: 16px;
+            color: #ff6b8b;
+            letter-spacing: 2px;
+            opacity: 0.9;
+            font-weight: 500;
         }
     </style>
 </head>
 <body>
-    <div class="main-heart" id="mainHeart">♥</div>
-    <div class="text">专属浪漫 永不落幕</div>
-
-    <!-- 表白弹窗 -->
-    <div class="modal" id="modal">
-        <div class="modal-content">
-            <div class="modal-text">遇见你是我最大的幸运，往后余生都是你 💖</div>
-            <button class="close-btn" id="closeBtn">确定</button>
-        </div>
+    <div class="heart" id="mainHeart"></div>
+    <!-- 新增底部文字 直接改引号里的内容即可 -->
+    <div class="footer-text">致我最爱的娇娇</div>
+    <div class="quote-box" id="quoteBox">
+        <p><span>✨</span> 你是藏在云层里的月亮，也是我穷极一生寻找的宝藏 <span>✨</span></p>
+        <button onclick="closeQuote()">我知道啦</button>
     </div>
 
     <script>
-        // 生成随机飘动的小爱心
-        function createFloatHeart() {
-            const heart = document.createElement("div");
-            heart.className = "float-heart";
-            heart.innerText = "♥";
-            const left = Math.random() * 100;
-            const size = Math.random() * 20 + 10;
-            const delay = Math.random() * 10;
-            const duration = Math.random() * 10 + 5;
+        const heart = document.getElementById('mainHeart');
+        const quoteBox = document.getElementById('quoteBox');
+        const quotes = [
+            "你是藏在云层里的月亮，也是我穷极一生寻找的宝藏",
+            "世界很烦，但你很可爱，星河滚烫，你是人间理想",
+            "遇到你之后，风是甜的，雨是温柔的，所有美好都恰逢其时",
+            "我的心是旷野的鸟，在你的眼睛里找到了天空",
+            "喜欢你，像风走了八千里，不问归期",
+            "往后余生，三餐四季，只想和你相伴",
+            "你不用多好，我喜欢就好；我没有很好，你不嫌弃就好"
+        ];
 
-            heart.style.left = `${left}vw`;
-            heart.style.fontSize = `${size}px`;
-            heart.style.animationDelay = `${delay}s`;
-            heart.style.animationDuration = `${duration}s`;
+        setTimeout(() => {
+            showRandomQuote();
+            quoteBox.classList.add('active');
+        }, 3000);
 
-            document.body.appendChild(heart);
-            setTimeout(() => {
-                heart.remove();
-            }, duration * 1000);
+        function closeQuote() {
+            quoteBox.classList.remove('active');
         }
-        setInterval(createFloatHeart, 300);
 
-        // 弹窗交互
-        const mainHeart = document.getElementById("mainHeart");
-        const modal = document.getElementById("modal");
-        const closeBtn = document.getElementById("closeBtn");
+        heart.addEventListener('click', () => {
+            showRandomQuote();
+            quoteBox.classList.add('active');
+        });
 
-        // 点击爱心打开弹窗
-        mainHeart.addEventListener("click", () => {
-            modal.style.display = "flex";
-        });
-        // 点击按钮关闭弹窗
-        closeBtn.addEventListener("click", () => {
-            modal.style.display = "none";
-        });
-        // 点击弹窗背景关闭
-        modal.addEventListener("click", (e) => {
-            if (e.target === modal) {
-                modal.style.display = "none";
-            }
-        });
+        function showRandomQuote() {
+            const randomQuote = quotes[Math.floor(Math.random() * quotes.length)];
+            quoteBox.querySelector('p').innerHTML = `<span>✨</span> ${randomQuote} <span>✨</span>`;
+        }
     </script>
 </body>
 </html>
